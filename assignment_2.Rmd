@@ -1,0 +1,156 @@
+---
+title: "assignment_2"
+author: "Hermes Martinez"
+date: "10/5/2017"
+output: html_document
+---
+
+## SETUP
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+source("functions.R")
+```
+
+## EXERCISE 1
+
+Exercice 1a.
+```{r}
+print(sum_column(iris, "Sepal.Length"))
+print(sum_column(iris, "Species"))
+print(sum_column(warpbreaks, "breaks"))
+```
+
+Exercice  1b.
+```{r}
+print(my_sum(iris$Sepal.Length))
+print(my_sum(iris$Species))
+print(my_sum(warpbreaks$breaks))
+```
+
+Exercice 1c.
+```{r}
+print(sum_divided_by(iris$Sepal.Length, 12))
+print(sum_divided_by(iris$Species, 22))
+print(sum_divided_by(iris$Sepal.Length, "Not numeric"))
+print(sum_divided_by(warpbreaks$breaks, -12))
+```
+
+Exercice 1d.
+```{r}
+print(my_mean(iris$Sepal.Length))
+print(my_mean(iris$Species))
+print(my_mean(warpbreaks$breaks))
+```
+
+## EXERCISE 2
+
+Exercice 2a.
+```{r}
+print(grouped_violin_plot(iris, "Sepal.Length", "Species"))
+```
+
+Exercice 2b. 
+```{r}
+p <- grouped_violin_plot(iris, "Sepal.Length", "Species")
+# YOUR CODE HERE: Change the colour scheme for the interior of the three violin plots
+#                 to anything else at all.
+p <- p + ggplot2::scale_fill_brewer(palette="black")
+# YOUR CODE HERE: Add a main title that says "Iris data".
+p <- p + ggplot2::ggtitle("Iris Data")
+print(p)
+```
+
+## EXERCISE 3
+
+Exercice 3a.
+```{r}
+difference_in_medians(iris, "Sepal.Width", "Species", "versicolor", "virginica")
+difference_in_medians(iris, "Sepal.Width", "Species", "virginica", "virginica")
+```
+
+Exercice 3b.
+```{r}
+iris$Sepal.Width[1:10]
+if(!exists(".Random.seed")) set.seed(NULL)
+previous_seed <- .Random.seed
+set.seed(1)
+randomize(iris, "Sepal.Width")$Sepal.Width[1:10]
+randomize(iris, "Species")$Species[1:10]
+randomize(iris, "Species")$Sepal.Width[1:10]
+set.seed(previous_seed)
+```
+
+Exercice 3c.
+```{r}
+if(!exists(".Random.seed")) set.seed(NULL)
+previous_seed <- .Random.seed
+set.seed(1)
+ptest_1 <- permutation_twogroups(iris, "Sepal.Width", "Species", "versicolor",
+                                 "virginica", difference_in_medians, n_samples=10)
+ptest_2 <- permutation_twogroups(iris, "Sepal.Width", "Species", "versicolor",
+                                 "virginica", difference_in_medians, n_samples=10)
+ptest_3 <- permutation_twogroups(randomize(iris, "Sepal.Width"), "Sepal.Width",
+                                 "Species", "versicolor", "virginica",
+                                 difference_in_medians, n_samples=10)
+set.seed(previous_seed)
+print(ptest_1)
+print(ptest_2)
+print(ptest_3)
+print(ptest_3$observed)
+print(ptest_3[["observed"]])
+```
+
+Exercice d. Does it matter for your permutation test whether you permute var or grouping_var? Why or why not?
+Yes, it does matter if you change var to grouping_var for instance, the outcome changes from "Sepal.Width" (expected) to an unexpected permutation with the Species group.
+
+Exercice 3e.
+```{r}
+if(!exists(".Random.seed")) set.seed(NULL)
+previous_seed <- .Random.seed
+set.seed(1)
+ptest <- permutation_twogroups(iris, "Sepal.Width", "Species", "versicolor",
+                              "virginica", difference_in_medians)
+set.seed(previous_seed)
+
+
+```
+
+
+```{r}
+ptest_d <- tibble::as_tibble(ptest["permuted"])
+p <- ggplot2::ggplot(ptest_d, ggplot2::aes_string(x="permuted"))
+p <- p + ggplot2::geom_histogram(fill="blue", colour="black")
+p <- p + ggplot2::ggtitle("Exercice 3e")
+p <- p + ggplot2::geom_vline(ggplot2::aes(xintercept=ptest[["observed"]]),lwd=0.7)
+print(p)
+  
+```
+
+Exercice 3f.
+```{r, cache=T}
+if(!exists(".Random.seed")) set.seed(NULL)
+previous_seed <- .Random.seed
+set.seed(1)
+ptest_new <- permutation_twogroups(iris, "Sepal.Width", "Species", "versicolor",
+                                   "virginica", new_test_statistic)
+set.seed(previous_seed)
+```
+```{r}
+ptest_n <- tibble::as_tibble(ptest_new["permuted"])
+p2 <- ggplot2::ggplot(ptest_n, ggplot2::aes_string(x="permuted")) +
+  ggplot2::geom_histogram(colour="black", fill="yellow") +
+  ggplot2::geom_vline(ggplot2::aes(xintercept=ptest_new[["observed"]]), lwd=0.6, color="black") +
+print(p2)
+```
+
+Exercice 3g.
+
+```{r}
+pvalue_r <- permutation_pvalue_right(ptest)
+pvalue_l <- permutation_pvalue_left(ptest)
+print(pvalue_r)
+print(pvalue_l)
+```
