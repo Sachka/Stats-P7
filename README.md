@@ -1,4 +1,4 @@
-## Statistics M2 Assignments
+## Statistics at Paris 7, M2 Assignments
 # Assignment 2
 # Required readings
 
