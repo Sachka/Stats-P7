@@ -1,5 +1,5 @@
 ## Statistics M2 Assignments
-# Assgnment 2
+# Assignment 2
 # Required readings
 
 Phillip Good textbook (in the Zotero): Chapter 1 and Chapter 2; if you choose to do any of the exercises, please let me know, I can help you check your answers
