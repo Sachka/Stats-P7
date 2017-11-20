@@ -1,0 +1,95 @@
+---
+title: "Assigment3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+# Add a code chunk at the very beginning of your Rmd that contains only one line
+`%>%` <- magrittr::`%>%`
+
+
+```{r}
+
+# Task A
+
+# Starting from the table stressshift::stress_shift_unamb, use dplyr::filter to extract only the data taken from dictionaries “W1802”, “J1917”, and “C1687”. Store the resulting table in a variable called stress_shift_3dict. The resulting table, stress_shift_3dict, should have 451 rows. Add a line at the bottom of your chunk that checks this for you by printing the number of rows in the table.
+
+data <- stressshift::stress_shift_unamb
+stress_shift_3dict <- dplyr::filter(data, Dict == "W1802" | Dict == "J1917"| Dict == "C1687")
+print(nrow(stress_shift_3dict))
+print(stress_shift_3dict)
+
+```
+
+
+```{r}
+
+# Task B
+
+stress_shift_3dict_using_pipe <- data %>% filter(Dict == "W1802" | Dict == "J1917"| Dict == "C1687")
+
+```
+
+
+```{r}
+
+# Task C
+
+
+# Use dplyr::filter to select only the observations for nouns from the three dictionaries above, storing the result as stress_shift_3dict_nouns, and then only the observations for verbs from the three dictionaries above, storing the result as stress_shift_3dict_verbs. Use dplyr::bind_rows to combine the two into a single table called stress_shift_3dict_using_bind. Now change the order of arguments to dplyr::bind_rows (if you previously put the noun table first and the verb table second in the function call, put the verb table first and the noun table second) and save the result into stress_shift_3dict_using_bind_reversed.
+
+stress_shift_3dict_nouns <- dplyr::filter(stress_shift_3dict,Category=="Noun")
+print(nrow(stress_shift_3dict_nouns))
+stress_shift_3dict_verbs <- dplyr::filter(stress_shift_3dict,Category=="Verb")
+print(nrow(stress_shift_3dict_nouns))
+stress_shift_3dict_using_bind <- dplyr::bind_rows(stress_shift_3dict_nouns,stress_shift_3dict_verbs)
+print(nrow(stress_shift_3dict_using_bind))
+stress_shift_3dict_using_bind_reversed <- dplyr::bind_rows(stress_shift_3dict_verbs,stress_shift_3dict_nouns)
+print(nrow(stress_shift_3dict_using_bind_reversed))
+identical(stress_shift_3dict,stress_shift_3dict_using_bind)
+identical(stress_shift_3dict,stress_shift_3dict_using_bind_reversed)
+
+
+```
+The two tables are not identical because of the order of the rows, but it doesn't matter for doing statistics
+
+```{r}
+
+# Task D
+
+# get the table only with the nouns, and delete the "Category"" column;
+dictnoun <- dplyr::filter(data,Category == "Noun")
+stress_shift_nouns_renamed <- dplyr::select(dictnoun, -Category)
+print(stress_shift_nouns_renamed)
+
+# get the table only with the verbs, and delete the "Category"" column;
+dictverb <- dplyr::filter(data,Category == "Verb")
+stress_shift_verbs_renamed <- dplyr::select(dictverb, -Category)
+print(stress_shift_verbs_renamed)
+
+
+```
+
+```{r}
+
+# Task E
+
+# Histogram 
+ggplot2::ggplot(stressshift::stress_shift_unamb,ggplot2::aes(x=Category, fill=Syllable)) +
+ggplot2::geom_bar(position="dodge", colour="blue") + ggplot2::scale_fill_brewer(palette="Set1")
+```
+
+
+```{r}
+
+# Task F
+
+test <- dplyr::group_by(data,Word)
+print(test)
+
+```
